@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <files-path
+        name="tuneDetect_images"
+        path="images/" />
+    <external-cache-path
+        name="tuneDetect_images"
+        path="/" />
+    <external-path
+        name="my_images"
+        path="." />
+</paths>

@@ -1,0 +1,3 @@
+E:/Coding/EmptyProject/core/database/.cxx/Debug/4b53n441/x86/CMakeFiles/database.dir
+E:/Coding/EmptyProject/core/database/.cxx/Debug/4b53n441/x86/CMakeFiles/edit_cache.dir
+E:/Coding/EmptyProject/core/database/.cxx/Debug/4b53n441/x86/CMakeFiles/rebuild_cache.dir

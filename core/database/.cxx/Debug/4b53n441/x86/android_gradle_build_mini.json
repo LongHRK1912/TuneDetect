@@ -1,0 +1,27 @@
+{
+  "buildFiles": [
+    "E:\\Coding\\EmptyProject\\core\\database\\src\\main\\cpp\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\longl\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-C",
+      "E:\\Coding\\EmptyProject\\core\\database\\.cxx\\Debug\\4b53n441\\x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\longl\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-C",
+    "E:\\Coding\\EmptyProject\\core\\database\\.cxx\\Debug\\4b53n441\\x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "database::@6890427a1f51a3e7e1df": {
+      "artifactName": "database",
+      "abi": "x86",
+      "output": "E:\\Coding\\EmptyProject\\core\\database\\build\\intermediates\\cxx\\Debug\\4b53n441\\obj\\x86\\libdatabase.so",
+      "runtimeFiles": []
+    }
+  }
+}
