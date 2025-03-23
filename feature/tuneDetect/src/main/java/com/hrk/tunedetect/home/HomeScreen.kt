@@ -39,13 +39,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.hrk.apps.hrkdev.core.data.TuneDetectViewModel
 import com.hrk.apps.hrkdev.core.designsystem.icon.HRKIcons
 import com.hrk.apps.hrkdev.core.model.iacr_cloud.IACRCloudState
 
 @Composable
 fun HomeScreen(
-    tuneDetectViewModel: TuneDetectViewModel
+    tuneDetectViewModel: TuneDetectViewModel,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val tuneState by tuneDetectViewModel.state.collectAsState()
     val volume by tuneDetectViewModel.volume.collectAsState()
