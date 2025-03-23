@@ -1,6 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="21" />
+    <bytecodeTargetLevel target="11">
+      <module name="hrkdev.app" target="17" />
+      <module name="hrkdev.benchmarks" target="17" />
+      <module name="hrkdev.core.analytics" target="17" />
+      <module name="hrkdev.core.data" target="17" />
+      <module name="hrkdev.core.designsystem" target="17" />
+      <module name="hrkdev.core.domain" target="17" />
+      <module name="hrkdev.core.network" target="17" />
+      <module name="hrkdev.core.notifications" target="17" />
+      <module name="hrkdev.core.testing" target="17" />
+      <module name="hrkdev.core.ui" target="17" />
+      <module name="hrkdev.feature.base" target="17" />
+      <module name="hrkdev.feature.notes" target="17" />
+      <module name="hrkdev.sync.sync-test" target="17" />
+      <module name="hrkdev.sync.work" target="17" />
+      <module name="hrkdev.ui-test-hilt-manifest" target="17" />
+      <module name="notes.app" target="21" />
+      <module name="notes.benchmarks" target="21" />
+      <module name="notes.core.analytics" target="21" />
+      <module name="notes.core.data" target="21" />
+      <module name="notes.core.database" target="21" />
+      <module name="notes.core.designsystem" target="21" />
+      <module name="notes.core.domain" target="21" />
+      <module name="notes.core.network" target="21" />
+      <module name="notes.core.notifications" target="21" />
+      <module name="notes.core.testing" target="21" />
+      <module name="notes.core.ui" target="21" />
+      <module name="notes.feature.base" target="17" />
+      <module name="notes.feature.notes" target="21" />
+      <module name="notes.feature.tuneDetect" target="21" />
+      <module name="notes.sync.sync-test" target="21" />
+      <module name="notes.sync.work" target="21" />
+      <module name="notes.ui-test-hilt-manifest" target="21" />
+    </bytecodeTargetLevel>
   </component>
 </project>
