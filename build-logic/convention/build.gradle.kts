@@ -97,10 +97,6 @@ gradlePlugin {
             id = "hrkdev.android.room"
             implementationClass = "AndroidRoomConventionPlugin"
         }
-        register("androidFirebase") {
-            id = "hrkdev.android.application.firebase"
-            implementationClass = "AndroidApplicationFirebaseConventionPlugin"
-        }
         register("androidFlavors") {
             id = "hrkdev.android.application.flavors"
             implementationClass = "AndroidApplicationFlavorsConventionPlugin"

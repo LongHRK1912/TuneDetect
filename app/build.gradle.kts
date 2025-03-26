@@ -20,7 +20,6 @@ plugins {
     alias(libs.plugins.hrkdev.android.application.compose)
     alias(libs.plugins.hrkdev.android.application.flavors)
     alias(libs.plugins.hrkdev.android.application.jacoco)
-    alias(libs.plugins.hrkdev.android.application.firebase)
     alias(libs.plugins.hrkdev.hilt)
     id("com.google.android.gms.oss-licenses-plugin")
     alias(libs.plugins.baselineprofile)

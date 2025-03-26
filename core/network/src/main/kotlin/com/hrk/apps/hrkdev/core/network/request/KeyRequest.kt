@@ -1,7 +1,8 @@
 package com.hrk.apps.hrkdev.core.network.request
 
-enum class KeyRequest(val url: String, val codeResponse: String,) {
+enum class KeyRequest(val url: String, val codeResponse: String = "") {
     //MAP
-    SEARCH_PLACE("https://maps.googleapis.com/maps/api/place/autocomplete/json?","200"),
+    AUTH_SPOTIFY("https://accounts.spotify.com/api/token"),
+    SEARCH_SPOTIFY("https://api.spotify.com/v1/search"),
     ;
 }

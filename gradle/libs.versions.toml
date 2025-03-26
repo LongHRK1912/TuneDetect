@@ -180,7 +180,6 @@ compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 dependencyGuard = { id = "com.dropbox.dependency-guard", version.ref = "dependencyGuard" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
-gms = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
@@ -194,7 +193,6 @@ secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugi
 # Plugins defined by this project
 hrkdev-android-application = { id = "hrkdev.android.application" }
 hrkdev-android-application-compose = { id = "hrkdev.android.application.compose" }
-hrkdev-android-application-firebase = { id = "hrkdev.android.application.firebase" }
 hrkdev-android-application-flavors = { id = "hrkdev.android.application.flavors" }
 hrkdev-android-application-jacoco = { id = "hrkdev.android.application.jacoco" }
 hrkdev-android-feature = { id = "hrkdev.android.feature" }
