@@ -1,6 +1,6 @@
 package com.hrk.apps.hrkdev.core.model.iacr_cloud
 
-const val Empty_Result = 1001
+val Empty_Result = listOf(1001,0)
 
 data class ACRCloudResponse(
     val metadata: Metadata? = null,

@@ -19,7 +19,7 @@ data class TracksItem(
     val artists: List<ArtistX>? = null,
     val available_markets: List<String>? = null,
     val disc_number: Int? = null,
-    val duration_ms: Int? = null,
+    val duration_ms: Long? = null,
     val explicit: Boolean? = null,
     val external_ids: ExternalIds? = null,
     val external_urls: ExternalUrlsXXX? = null,

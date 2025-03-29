@@ -18,6 +18,7 @@ package com.hrk.apps.hrkdev.core.designsystem.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -44,9 +45,10 @@ import com.hrk.apps.hrkdev.core.designsystem.theme.LocalTintTheme
 
 @Composable
 fun DynamicAsyncImage(
-    imageUrl: String,
+    imageUrl: Any?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
+    contentScale:ContentScale = ContentScale.FillBounds,
     placeholder: Painter = painterResource(R.drawable.core_designsystem_ic_placeholder_default),
 ) {
     val iconTint = LocalTintTheme.current.iconTint
@@ -65,7 +67,6 @@ fun DynamicAsyncImage(
         contentAlignment = Alignment.Center,
     ) {
         if (isLoading && !isLocalInspection) {
-            // Display a progress bar while loading
             CircularProgressIndicator(
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -74,7 +75,8 @@ fun DynamicAsyncImage(
             )
         }
         Image(
-            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = contentScale,
             painter = if (isError.not() && !isLocalInspection) imageLoader else placeholder,
             contentDescription = contentDescription,
             colorFilter = if (iconTint != Unspecified) ColorFilter.tint(iconTint) else null,

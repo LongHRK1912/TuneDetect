@@ -31,7 +31,6 @@ include(":core:notifications")
 include(":core:testing")
 include(":core:ui")
 
-include(":lint")
 include(":sync:work")
 include(":sync:sync-test")
 include(":ui-test-hilt-manifest")
