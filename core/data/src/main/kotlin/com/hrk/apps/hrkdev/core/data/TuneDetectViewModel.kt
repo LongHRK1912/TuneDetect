@@ -7,6 +7,7 @@ import com.hrk.apps.hrkdev.core.data.repository.SearchingRepository
 import com.hrk.apps.hrkdev.core.model.iacr_cloud.IACRCloudState
 import com.hrk.apps.hrkdev.core.model.spotify.SearchSpotifyBody
 import com.hrk.apps.hrkdev.core.model.spotify.SearchSpotifyResponse
+import com.hrk.apps.hrkdev.core.utils.AuthService
 import com.hrk.apps.hrkdev.core.utils.JSON.decodeTo
 import com.hrk.apps.hrkdev.core.utils.ResultWrapper
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,52 +21,15 @@ class TuneDetectViewModel @Inject constructor(
     private var _isServiceInitialized = MutableStateFlow(false)
     val isServiceInitialized = _isServiceInitialized.asStateFlow()
 
-    private var _token: String? = null
-    var spotifyResponse = MutableStateFlow<SearchSpotifyResponse?>(null)
-
-    init {
-        viewModelScope.launch {
-//            if (_token == null) {
-//                Log.d("ASDSADASDASDASD", "Token")
-//                searchingRepository.auth().collect {
-//                    Log.d("ASDSADASDASDASD", it.toJson())
-//                    when (it) {
-//                        is ResultWrapper.Success -> {
-//                            Log.d("ASDSADASDASDASD", "Token ${it.value.access_token}")
-//                            _token = it.value.access_token
-//                        }
-//
-//                        else -> {}
-//                    }
-//                }
-//            }
-
-            viewModelScope.launch {
-                searchingRepository.search(
-                    auth = "Bearer BQAEHkNtuH56oVv7oZzupW8182y8QHjt--msHyuqypnUWk778B3q9taGRwCuwWsXZ2CX8uyfWPP2yPsojd3-NKM2GWGKRpPD7eyDXhQrWutHOqpivId_Dw-8fZc67QB3AAE39uTBjkE",
-                    searchBody = SearchSpotifyBody(
-                        q = "Vua%20Di%20Vua%20Khoc"
-                    ),
-                ).collect {
-                    Log.d("ASDSADASDASDASD", "STATE $it")
-                    when (it) {
-                        is ResultWrapper.Success -> {
-                            spotifyResponse.value =
-                                it.value.data().decodeTo(SearchSpotifyResponse::class.java)
-                        }
-
-                        else -> {}
-                    }
-                }
-            }
-        }
-    }
+    private var _spotifyResponse =
+        MutableStateFlow<SpotifyResponseState>(SpotifyResponseState.Nothing)
+    val spotifyResponse = _spotifyResponse.asStateFlow()
 
     fun updateServiceInitialized(isInitialized: Boolean) {
         _isServiceInitialized.value = isInitialized
     }
 
-    private val _volume = MutableStateFlow<Double>(0.0)
+    private val _volume = MutableStateFlow(0.0)
     val volume = _volume.asStateFlow()
 
     fun onVolumeChanged(volume: Double) {
@@ -76,11 +40,47 @@ class TuneDetectViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     fun updateStateIACRCloud(newState: IACRCloudState) {
+        when (newState) {
+            is IACRCloudState.Success -> {
+                if (newState.result.metadata?.music.orEmpty().isNotEmpty()) {
+                    val musics = newState.result.metadata?.music.orEmpty()
+
+                    val nameArtists = musics.map { artists ->
+                        artists.artists?.map {
+                            it.name
+                        }?.joinToString(" ")
+                    }
+
+                    val nameAlbum = musics.map { album ->
+                        album.album?.name
+                    }
+
+                    val nameSong = musics.map { album ->
+                        album.title
+                    }
+
+
+                    val keyword = nameAlbum.mapIndexed { index, album ->
+                        nameSong + " " + album + " " + nameArtists[index]
+                    }.joinToString(", ")
+
+                    searchResultFromSpotify(keyword)
+                } else {
+                    _spotifyResponse.value = SpotifyResponseState.Success(
+                        SearchSpotifyResponse()
+                    )
+                }
+            }
+
+            else -> Unit
+        }
+
         _state.value = newState
     }
 
     fun resetStateIACRCloud() {
         _state.value = IACRCloudState.Nothing
+        _spotifyResponse.value = SpotifyResponseState.Nothing
     }
 
     fun handlerClicked() {
@@ -95,22 +95,35 @@ class TuneDetectViewModel @Inject constructor(
         }
     }
 
-    fun searchResultFromSpotify(keyword: String){
+    private fun searchResultFromSpotify(keyword: String) {
         viewModelScope.launch {
-            searchingRepository.search(
-                auth = "Bearer BQAEHkNtuH56oVv7oZzupW8182y8QHjt--msHyuqypnUWk778B3q9taGRwCuwWsXZ2CX8uyfWPP2yPsojd3-NKM2GWGKRpPD7eyDXhQrWutHOqpivId_Dw-8fZc67QB3AAE39uTBjkE",
-                searchBody = SearchSpotifyBody(
-                    q = keyword
-                ),
-            ).collect {
-                Log.d("ASDSADASDASDASD", "STATE $it")
-                when (it) {
-                    is ResultWrapper.Success -> {
-                        spotifyResponse.value =
-                            it.value.data().decodeTo(SearchSpotifyResponse::class.java)
-                    }
+            AuthService.authSpotify?.let {
+                Log.d("SDFDSFSDFSDFSDF", "searchResultFromSpotify: $it")
+                Log.d("SDFDSFSDFSDFSDF", "getToken: ${it.getToken()}")
+                searchingRepository.search(
+                    auth = it.getToken(),
+                    searchBody = SearchSpotifyBody(
+                        q = keyword
+                    ),
+                ).collect { response ->
+                    when (response) {
+                        is ResultWrapper.Success -> {
+                            _spotifyResponse.value = SpotifyResponseState.Success(
+                                response.value.data().decodeTo(SearchSpotifyResponse::class.java)
+                                    ?: SearchSpotifyResponse()
+                            )
+                        }
 
-                    else -> {}
+                        is ResultWrapper.Error -> {
+                            _spotifyResponse.value = SpotifyResponseState.Error(
+                                message = response.message.orEmpty()
+                            )
+                        }
+
+                        ResultWrapper.Loading -> {
+                            _spotifyResponse.value = SpotifyResponseState.Loading
+                        }
+                    }
                 }
             }
         }

@@ -36,3 +36,4 @@ include(":sync:sync-test")
 include(":ui-test-hilt-manifest")
 
 include(":feature:tuneDetect")
+include(":core:preferences")

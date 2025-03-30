@@ -2,16 +2,15 @@ plugins {
     alias(libs.plugins.hrkdev.android.library)
     alias(libs.plugins.hrkdev.android.library.jacoco)
     alias(libs.plugins.hrkdev.hilt)
+    alias(libs.plugins.ksp)
     id("kotlinx-serialization")
 }
 
 android {
-    namespace = "com.hrk.apps.hrkdev.core.data"
+    namespace = "com.hrk.preferences"
 }
 
 dependencies {
-    api(projects.core.database)
-    api(projects.core.preferences)
     api(projects.core.common)
     api(projects.core.network)
 
@@ -21,4 +20,9 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.kotlinx.serialization.json)
     testImplementation(projects.core.testing)
+
+    ksp(libs.room.compiler)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    implementation(libs.androidx.startup.runtime)
 }

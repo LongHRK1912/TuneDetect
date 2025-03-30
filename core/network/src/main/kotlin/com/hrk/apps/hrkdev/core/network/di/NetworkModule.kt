@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder
 import com.hrk.apps.hrkdev.core.network.BuildConfig
 import com.hrk.apps.hrkdev.core.network.manager.EnvironmentManager
 import com.hrk.apps.hrkdev.core.network.service.ApiService
+import com.hrk.apps.hrkdev.core.network.service.AuthInterceptor
 import com.hrk.apps.hrkdev.core.network.service.RetrofitService
 import dagger.Module
 import dagger.Provides
@@ -38,18 +39,20 @@ internal object NetworkModule {
                 level = HttpLoggingInterceptor.Level.BODY
             }
         }
-        return OkHttpClient.Builder().addInterceptor(logging).addInterceptor(
-            Interceptor { chain ->
-                val originalRequest = chain.request()
-                val newRequest = originalRequest.newBuilder()
-                    .header("Cache-Control", "max-age=0, no-cache, no-store, must-revalidate")
-                    .build()
-                chain.proceed(newRequest)
-            }
-        ).connectTimeout(RetrofitService.LONG_TIME_OUT, TimeUnit.MILLISECONDS).readTimeout(
-            RetrofitService.LONG_TIME_OUT,
-            TimeUnit.SECONDS
-        )
+        return OkHttpClient.Builder().addInterceptor(logging)
+            .addInterceptor(AuthInterceptor())
+            .addInterceptor(
+                Interceptor { chain ->
+                    val originalRequest = chain.request()
+                    val newRequest = originalRequest.newBuilder()
+                        .header("Cache-Control", "max-age=0, no-cache, no-store, must-revalidate")
+                        .build()
+                    chain.proceed(newRequest)
+                }
+            ).connectTimeout(RetrofitService.LONG_TIME_OUT, TimeUnit.MILLISECONDS).readTimeout(
+                RetrofitService.LONG_TIME_OUT,
+                TimeUnit.SECONDS
+            )
             .writeTimeout(15, TimeUnit.SECONDS).build()
     }
 

@@ -21,7 +21,6 @@ fun BottomSheetHandler(
 
         is IACRCloudState.Success -> BottomSheetResult(
             tuneDetectViewModel = tuneDetectViewModel,
-            tuneDetect = tuneDetect,
             onDismiss = onDismiss
         )
 

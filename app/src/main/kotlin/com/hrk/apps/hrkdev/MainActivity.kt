@@ -2,18 +2,21 @@ package com.hrk.apps.hrkdev
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.LaunchedEffect
 import com.acrcloud.rec.ACRCloudClient
 import com.acrcloud.rec.ACRCloudConfig
 import com.acrcloud.rec.ACRCloudResult
 import com.acrcloud.rec.IACRCloudListener
+import com.hrk.apps.hrkdev.core.data.AuthSpotifyUseCase
 import com.hrk.apps.hrkdev.core.data.TuneDetectViewModel
 import com.hrk.apps.hrkdev.core.data.util.NetworkMonitor
 import com.hrk.apps.hrkdev.core.model.iacr_cloud.ACRCloudResponse
 import com.hrk.apps.hrkdev.core.model.iacr_cloud.IACRCloudState
+import com.hrk.apps.hrkdev.core.utils.AuthService
+import com.hrk.apps.hrkdev.core.utils.AuthSpotifyResponse
 import com.hrk.apps.hrkdev.core.utils.JSON.decodeTo
 import com.hrk.apps.hrkdev.core.utils.JSON.toJson
 import com.hrk.apps.hrkdev.handler.ACRCloudEntryPoint
@@ -30,6 +33,9 @@ class MainActivity : ComponentActivity(), IACRCloudListener {
     @Inject
     lateinit var tuneDetectViewModel: TuneDetectViewModel
 
+    @Inject
+    lateinit var authSpotifyUseCase: AuthSpotifyUseCase
+
     private lateinit var acrCloudClient: ACRCloudClient
     private lateinit var acrCloudConfig: ACRCloudConfig
 
@@ -37,10 +43,16 @@ class MainActivity : ComponentActivity(), IACRCloudListener {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            LaunchedEffect(Unit) {
+                if (AuthService.authSpotify == null) {
+                    authSpotifyUseCase.invoke()
+                }
+            }
+
             HRKApp(
                 networkMonitor = networkMonitor,
                 tuneDetectViewModel = tuneDetectViewModel,
-                acrCloudClient = acrCloudClient
+                acrCloudClient = acrCloudClient,
             )
         }
         val entryPoint = EntryPointAccessors.fromActivity(this, ACRCloudEntryPoint::class.java)
@@ -52,7 +64,6 @@ class MainActivity : ComponentActivity(), IACRCloudListener {
 
     override fun onResult(result: ACRCloudResult?) {
         result?.result?.decodeTo(ACRCloudResponse::class.java)?.let { response ->
-            Log.d("SSDFDSFDSFSDF", "onResult: ${response.toJson()}")
             tuneDetectViewModel.updateStateIACRCloud(IACRCloudState.Success(response))
         }
     }
@@ -65,4 +76,5 @@ class MainActivity : ComponentActivity(), IACRCloudListener {
         super.onDestroy()
         this.acrCloudClient.release()
     }
+
 }

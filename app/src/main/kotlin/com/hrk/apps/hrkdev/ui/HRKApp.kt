@@ -16,18 +16,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.acrcloud.rec.ACRCloudClient
 import com.hrk.apps.hrkdev.R
+import com.hrk.apps.hrkdev.core.data.AuthSpotifyUseCase
 import com.hrk.apps.hrkdev.core.data.TuneDetectViewModel
 import com.hrk.apps.hrkdev.core.data.util.NetworkMonitor
 import com.hrk.apps.hrkdev.core.model.iacr_cloud.IACRCloudState
+import com.hrk.apps.hrkdev.core.utils.AuthService
 import com.hrk.apps.hrkdev.handler.BottomSheetHandler
 import com.hrk.apps.hrkdev.navigation.HRKNavHost
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun HRKApp(
     networkMonitor: NetworkMonitor,
     tuneDetectViewModel: TuneDetectViewModel,
-    acrCloudClient: ACRCloudClient
+    acrCloudClient: ACRCloudClient,
 ) {
     val appState = rememberHRKAppState(
         networkMonitor = networkMonitor,

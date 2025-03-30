@@ -4,4 +4,6 @@ data class AuthSpotifyResponse(
     val access_token: String? = null,
     val expires_in: Int? = null,
     val token_type: String? = null
-)
+){
+    fun getToken() = "$token_type $access_token"
+}
