@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder
 import com.hrk.apps.hrkdev.core.network.manager.EnvironmentManager
 import com.hrk.apps.hrkdev.core.network.request.KeyRequest
 import com.hrk.apps.hrkdev.core.utils.AuthService
-import com.hrk.apps.hrkdev.core.utils.AuthService.TOKEN_EXPIRATION_CODE
 import com.hrk.apps.hrkdev.core.utils.AuthSpotifyResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -29,7 +28,7 @@ class AuthInterceptor : Interceptor {
         }
         val response = chain.proceed(request)
 
-        if (response.code == TOKEN_EXPIRATION_CODE) {
+        if (response.code in 400..500) {
             synchronized(this) {
                 response.close()
                 return runBlocking(context = Dispatchers.IO) {

@@ -4,7 +4,6 @@ import java.util.Base64
 
 
 object AuthService {
-    const val TOKEN_EXPIRATION_CODE = 401
 
     var authSpotify: AuthSpotifyResponse? = null
 
