@@ -107,7 +107,7 @@ fun GlowingNeonButton(
     onChangeState: () -> Unit
 ) {
     var isPressed by remember { mutableStateOf(false) }
-    var isStart by remember(tuneState) {
+    val isStart by remember(tuneState) {
         mutableStateOf(tuneState is IACRCloudState.Nothing)
     }
 

@@ -98,8 +98,6 @@ class TuneDetectViewModel @Inject constructor(
     private fun searchResultFromSpotify(keyword: String) {
         viewModelScope.launch {
             AuthService.authSpotify?.let {
-                Log.d("SDFDSFSDFSDFSDF", "searchResultFromSpotify: $it")
-                Log.d("SDFDSFSDFSDFSDF", "getToken: ${it.getToken()}")
                 searchingRepository.search(
                     auth = it.getToken(),
                     searchBody = SearchSpotifyBody(

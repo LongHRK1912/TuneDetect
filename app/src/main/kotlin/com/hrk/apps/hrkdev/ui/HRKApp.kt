@@ -6,7 +6,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration.Indefinite
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,13 +15,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.acrcloud.rec.ACRCloudClient
 import com.hrk.apps.hrkdev.R
-import com.hrk.apps.hrkdev.core.data.AuthSpotifyUseCase
 import com.hrk.apps.hrkdev.core.data.TuneDetectViewModel
 import com.hrk.apps.hrkdev.core.data.util.NetworkMonitor
 import com.hrk.apps.hrkdev.core.model.iacr_cloud.IACRCloudState
-import com.hrk.apps.hrkdev.core.utils.AuthService
-import com.hrk.apps.hrkdev.handler.BottomSheetHandler
+import com.hrk.apps.hrkdev.handler.TuneDetectHandler
 import com.hrk.apps.hrkdev.navigation.HRKNavHost
+import com.hrk.tunedetect.result.navigation.navigateToResultScreen
 
 @Composable
 fun HRKApp(
@@ -33,6 +31,8 @@ fun HRKApp(
     val appState = rememberHRKAppState(
         networkMonitor = networkMonitor,
     )
+
+    val navController = appState.navController
 
     val snackbarHostState = remember { SnackbarHostState() }
     val isOffline by appState.isOffline.collectAsStateWithLifecycle()
@@ -49,29 +49,27 @@ fun HRKApp(
         }
     }
 
-    LaunchedEffect(tuneDetect) {
-        when (tuneDetect) {
-            IACRCloudState.Nothing -> cancelACRCloudClient(
-                acrCloudClient = acrCloudClient,
-            )
-
-            IACRCloudState.Recording -> startACRCloudClient(
-                tuneDetectViewModel = tuneDetectViewModel,
-                acrCloudClient = acrCloudClient,
-                state = tuneDetect,
-                isServiceInitialized = isServiceInitialized
-            )
-
-            else -> Unit
-        }
-    }
-
-    BottomSheetHandler(
+    TuneDetectHandler(
         tuneDetectViewModel = tuneDetectViewModel,
         tuneDetect = tuneDetect,
         onDismiss = {
             tuneDetectViewModel.resetStateIACRCloud()
         },
+        cancelACRCloudClient = {
+            cancelACRCloudClient(acrCloudClient = acrCloudClient)
+        },
+        startACRCloudClient = {
+            startACRCloudClient(
+                tuneDetectViewModel = tuneDetectViewModel,
+                acrCloudClient = acrCloudClient,
+                state = tuneDetect,
+                isServiceInitialized = isServiceInitialized
+            )
+        },
+        onNavToResultScreen = {
+            navController.navigateToResultScreen()
+            tuneDetectViewModel.resetStateIACRCloud()
+        }
     )
 
     Scaffold(
@@ -82,8 +80,8 @@ fun HRKApp(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            appState = appState,
-            tuneDetectViewModel = tuneDetectViewModel
+            tuneDetectViewModel = tuneDetectViewModel,
+            navController = navController
         )
     }
 }
