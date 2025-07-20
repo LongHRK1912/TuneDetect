@@ -40,40 +40,40 @@ class TuneDetectViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     fun updateStateIACRCloud(newState: IACRCloudState) {
-        when (newState) {
-            is IACRCloudState.Success -> {
-                if (newState.result.metadata?.music.orEmpty().isNotEmpty()) {
-                    val musics = newState.result.metadata?.music.orEmpty()
-
-                    val nameArtists = musics.map { artists ->
-                        artists.artists?.map {
-                            it.name
-                        }?.joinToString(" ")
-                    }
-
-                    val nameAlbum = musics.map { album ->
-                        album.album?.name
-                    }
-
-                    val nameSong = musics.map { album ->
-                        album.title
-                    }
-
-
-                    val keyword = nameAlbum.mapIndexed { index, album ->
-                        nameSong + " " + album + " " + nameArtists[index]
-                    }.joinToString(", ")
-
-                    searchResultFromSpotify(keyword)
-                } else {
-                    _spotifyResponse.value = SpotifyResponseState.Success(
-                        SearchSpotifyResponse()
-                    )
-                }
-            }
-
-            else -> Unit
-        }
+//        when (newState) {
+//            is IACRCloudState.Success -> {
+//                if (newState.result.metadata?.music.orEmpty().isNotEmpty()) {
+//                    val musics = newState.result.metadata?.music.orEmpty()
+//
+//                    val nameArtists = musics.map { artists ->
+//                        artists.artists?.map {
+//                            it.name
+//                        }?.joinToString(" ")
+//                    }
+//
+//                    val nameAlbum = musics.map { album ->
+//                        album.album?.name
+//                    }
+//
+//                    val nameSong = musics.map { album ->
+//                        album.title
+//                    }
+//
+//
+//                    val keyword = nameAlbum.mapIndexed { index, album ->
+//                        nameSong + " " + album + " " + nameArtists[index]
+//                    }.joinToString(", ")
+//
+//                    searchResultFromSpotify(keyword)
+//                } else {
+//                    _spotifyResponse.value = SpotifyResponseState.Success(
+//                        SearchSpotifyResponse()
+//                    )
+//                }
+//            }
+//
+//            else -> Unit
+//        }
 
         _state.value = newState
     }

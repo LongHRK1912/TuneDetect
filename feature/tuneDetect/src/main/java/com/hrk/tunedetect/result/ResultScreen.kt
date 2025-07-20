@@ -1,6 +1,7 @@
 package com.hrk.tunedetect.result
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,6 +44,7 @@ import com.hrk.apps.hrkdev.core.designsystem.icon.HRKIcons
 import com.hrk.apps.hrkdev.core.designsystem.utils.ComposeUtils.clickableSingle
 import com.hrk.apps.hrkdev.core.designsystem.utils.shadow
 import com.hrk.apps.hrkdev.core.model.iacr_cloud.ACRCloudResponse
+import com.hrk.apps.hrkdev.core.utils.JSON.toJson
 import com.hrk.tunedetect.util.orEmpty
 import com.hrk.tunedetect.util.textWithStyle
 
@@ -53,6 +56,10 @@ fun ResultScreen(
         creationCallback = { factory -> factory.create(acrCloud = acrCloud) },
     )
 ) {
+    LaunchedEffect(acrCloud) {
+        Log.d("SDFSDFSDFSDFSDFSDF", "ResultScreen: ${acrCloud.toJson()}")
+    }
+
     val uiState by viewmodel.uiState.collectAsState()
 
     val trackImage = uiState.track?.album?.images?.firstOrNull()?.url.orEmpty()
