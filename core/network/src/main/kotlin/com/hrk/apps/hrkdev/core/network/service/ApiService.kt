@@ -1,5 +1,6 @@
 package com.hrk.apps.hrkdev.core.network.service
 
+import com.google.gson.JsonElement
 import com.hrk.apps.hrkdev.core.utils.AuthSpotifyResponse
 import com.hrk.apps.hrkdev.core.utils.SpotifyResponse
 import retrofit2.http.FieldMap
@@ -26,4 +27,10 @@ interface ApiService {
         @Header("Authorization") auth: String,
         @Url url: String,
     ): SpotifyResponse
+
+    @GET
+    suspend fun getTrack(
+        @Header("Authorization") auth: String,
+        @Url url: String,
+    ): JsonElement
 }

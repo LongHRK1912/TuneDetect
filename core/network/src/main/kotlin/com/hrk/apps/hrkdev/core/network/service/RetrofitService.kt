@@ -1,6 +1,7 @@
 package com.hrk.apps.hrkdev.core.network.service
 
 import android.util.Log
+import com.google.gson.JsonElement
 import com.hrk.apps.hrkdev.core.network.request.KeyRequest
 import com.hrk.apps.hrkdev.core.utils.AuthSpotifyResponse
 import com.hrk.apps.hrkdev.core.utils.NetworkConstant
@@ -45,6 +46,19 @@ class RetrofitService @Inject constructor(
         }, codeRequired)
     }
 
+    suspend fun getTrackDetailMethod(
+        auth: String,
+        request: KeyRequest,
+        message: String,
+        codeRequired: String
+    ): ResultWrapper<JsonElement> {
+        return trackDetailSpotifySafeApiCall({
+            apiService.getTrack(
+                auth, request.url + message
+            )
+        }, codeRequired)
+    }
+
     private suspend fun authSafeApiCall(
         apiCall: suspend () -> AuthSpotifyResponse,
         codeRequired: String
@@ -54,7 +68,6 @@ class RetrofitService @Inject constructor(
                 val response = apiCall.invoke()
                 ResultWrapper.Success(response)
             } catch (throwable: Throwable) {
-                Log.d("DASDASDASDASDAS", "authSafeApiCall: ${throwable}")
                 when (throwable) {
                     is IOException -> {
                         ResultWrapper.Error(NetworkConstant.IOException, throwable.message)
@@ -95,6 +108,47 @@ class RetrofitService @Inject constructor(
                     ResultWrapper.Success(response)
                 } else {
                     ResultWrapper.Error(message = response.data())
+                }
+            } catch (throwable: Throwable) {
+                when (throwable) {
+                    is IOException -> {
+                        ResultWrapper.Error(NetworkConstant.IOException, throwable.message)
+                    }
+
+                    is HttpException -> {
+                        val code = throwable.code()
+                        ResultWrapper.Error(code.toString(), throwable.message)
+                    }
+
+                    is TimeoutCancellationException -> {
+                        ResultWrapper.Error(
+                            NetworkConstant.TimeoutCancellationException,
+                            throwable.message
+                        )
+                    }
+
+                    else -> {
+                        ResultWrapper.Error(NetworkConstant.UnknownError, throwable.message)
+                    }
+                }
+            }
+        } ?: ResultWrapper.Error(
+            code = NetworkConstant.TimeOutCodeResponse,
+            message = NetworkConstant.TimeOut,
+            data = NetworkConstant.TimeOut
+        )
+
+    private suspend fun trackDetailSpotifySafeApiCall(
+        apiCall: suspend () -> JsonElement,
+        codeRequired: String
+    ): ResultWrapper<JsonElement> =
+        withTimeoutOrNull(TIME_OUT) {
+            try {
+                val response = apiCall.invoke()
+                if (response != null) {
+                    ResultWrapper.Success(response)
+                } else {
+                    ResultWrapper.Error(message = response)
                 }
             } catch (throwable: Throwable) {
                 when (throwable) {

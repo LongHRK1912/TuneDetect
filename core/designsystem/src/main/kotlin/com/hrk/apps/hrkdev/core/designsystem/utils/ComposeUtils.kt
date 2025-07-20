@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 
 object ComposeUtils {
     @Composable
@@ -196,4 +197,44 @@ fun shimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1000f): Brush
             end = Offset.Zero
         )
     }
+}
+
+fun <T> NavHostController.setData(
+    key: String,
+    value: T?
+) {
+    currentBackStackEntry?.savedStateHandle?.set(key, value)
+}
+
+fun <T> NavHostController.removeKey(
+    key: String
+) {
+    currentBackStackEntry?.savedStateHandle?.remove<T>(key)
+}
+
+fun <T> NavHostController.removePrevKey(
+    key: String
+) {
+    previousBackStackEntry?.savedStateHandle?.remove<T>(key)
+}
+
+fun <T> NavHostController.setPrevData(
+    key: String,
+    value: T?
+) {
+    previousBackStackEntry
+        ?.savedStateHandle
+        ?.set(key, value)
+}
+
+fun <T> NavHostController.getPrevData(key: String): T? {
+    return previousBackStackEntry?.savedStateHandle?.get<T>(
+        key
+    )
+}
+
+fun <T> NavHostController.getData(key: String): T? {
+    return currentBackStackEntry?.savedStateHandle?.get<T>(
+        key
+    )
 }

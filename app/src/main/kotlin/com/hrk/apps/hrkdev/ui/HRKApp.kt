@@ -15,9 +15,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.acrcloud.rec.ACRCloudClient
 import com.hrk.apps.hrkdev.R
+import com.hrk.apps.hrkdev.core.NavigationKey.ACRCloudResponseKey
 import com.hrk.apps.hrkdev.core.data.TuneDetectViewModel
 import com.hrk.apps.hrkdev.core.data.util.NetworkMonitor
+import com.hrk.apps.hrkdev.core.designsystem.utils.setData
 import com.hrk.apps.hrkdev.core.model.iacr_cloud.IACRCloudState
+import com.hrk.apps.hrkdev.core.utils.JSON.toJson
 import com.hrk.apps.hrkdev.handler.TuneDetectHandler
 import com.hrk.apps.hrkdev.navigation.HRKNavHost
 import com.hrk.tunedetect.result.navigation.navigateToResultScreen
@@ -67,6 +70,7 @@ fun HRKApp(
             )
         },
         onNavToResultScreen = {
+            navController.setData(ACRCloudResponseKey, it.toJson())
             navController.navigateToResultScreen()
             tuneDetectViewModel.resetStateIACRCloud()
         }

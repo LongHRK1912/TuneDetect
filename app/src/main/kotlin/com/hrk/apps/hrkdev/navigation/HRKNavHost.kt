@@ -36,7 +36,8 @@ fun HRKNavHost(
         )
 
         resultScreen(
-            onBack = navController::popBackStack
+            onBack = navController::popBackStack,
+            navController = navController
         )
 
         settingScreen(

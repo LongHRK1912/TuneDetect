@@ -18,6 +18,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,27 +36,30 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.hrk.apps.hrkdev.core.designsystem.component.DynamicAsyncImage
 import com.hrk.apps.hrkdev.core.designsystem.icon.HRKIcons
 import com.hrk.apps.hrkdev.core.designsystem.utils.ComposeUtils.clickableSingle
 import com.hrk.apps.hrkdev.core.designsystem.utils.shadow
 import com.hrk.apps.hrkdev.core.model.iacr_cloud.ACRCloudResponse
-import com.hrk.apps.hrkdev.core.model.spotify.TracksItem
 import com.hrk.tunedetect.util.orEmpty
 import com.hrk.tunedetect.util.textWithStyle
 
 @Composable
 fun ResultScreen(
     onBack: () -> Unit,
-    acrCloud: ACRCloudResponse,
+    acrCloud: ACRCloudResponse?,
+    viewmodel: ResultViewModel = hiltViewModel<ResultViewModel, ResultViewModel.Factory>(
+        creationCallback = { factory -> factory.create(acrCloud = acrCloud) },
+    )
 ) {
-    val track: TracksItem = TracksItem()
+    val uiState by viewmodel.uiState.collectAsState()
 
-    val trackImage = track.album?.images?.firstOrNull()?.url.orEmpty()
-    val releaseDate = track.album?.release_date.orEmpty()
-    val artists = track.artists?.firstOrNull()?.name.orEmpty()
-    val songName = track.name.orEmpty()
-    val duration = convertMillisecondsToMinutes(track.duration_ms)
+    val trackImage = uiState.track?.album?.images?.firstOrNull()?.url.orEmpty()
+    val releaseDate = uiState.track?.album?.release_date.orEmpty()
+    val artists = uiState.track?.artists?.firstOrNull()?.name.orEmpty()
+    val songName = uiState.track?.name.orEmpty()
+    val duration = convertMillisecondsToMinutes(uiState.track?.duration_ms)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
