@@ -1,6 +1,5 @@
 package com.hrk.tunedetect.result
 
-import android.util.Log
 import com.hrk.apps.hrkdev.core.data.repository.SearchingRepository
 import com.hrk.apps.hrkdev.core.model.iacr_cloud.ACRCloudResponse
 import com.hrk.apps.hrkdev.core.model.spotify.TrackDetailResponse
@@ -14,6 +13,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 
 @HiltViewModel(assistedFactory = ResultViewModel.Factory::class)
@@ -21,6 +22,9 @@ class ResultViewModel @AssistedInject constructor(
     @Assisted private val acrCloud: ACRCloudResponse?,
     private val searchingRepository: SearchingRepository,
 ) : BaseViewModel<ResultEventUiState, ResultEvent>(ResultEventUiState()) {
+
+    private var _spotifyState = MutableStateFlow<SpotifyTrackState>(SpotifyTrackState.NOTHING)
+    val spotifyState = _spotifyState.asStateFlow()
 
     init {
         handleEvent(
@@ -41,9 +45,7 @@ class ResultViewModel @AssistedInject constructor(
 
     private fun getTrackInformationFromSpotify() {
         async {
-            val trackId =
-                acrCloud?.metadata?.music?.firstOrNull()?.external_metadata?.spotify?.track?.id
-                    ?: return@async
+            val trackId = acrCloud?.metadata?.music?.firstOrNull()?.external_metadata?.spotify?.track?.id ?: return@async
 
             AuthService.authSpotify?.let {
                 searchingRepository.trackDetail(
@@ -52,18 +54,18 @@ class ResultViewModel @AssistedInject constructor(
                 ).collect { response ->
                     when (response) {
                         is ResultWrapper.Success -> {
-                            updateUiState(
-                                uiState = uiState.value.copy(
-                                    track = response.toJson().decodeTo(TrackDetailResponse::class.java)?.value
-                                )
-                            )
+                            response.toJson()
+                                .decodeTo(TrackDetailResponse::class.java)?.value?.let { track ->
+                                    _spotifyState.value = SpotifyTrackState.SUCCESS(track)
+                                }
                         }
 
                         is ResultWrapper.Error -> {
+                            _spotifyState.value = SpotifyTrackState.ERROR("Error get track")
                         }
 
                         ResultWrapper.Loading -> {
-
+                            _spotifyState.value = SpotifyTrackState.LOADING
                         }
                     }
                 }
@@ -79,3 +81,10 @@ sealed interface ResultEvent {
 data class ResultEventUiState(
     val track: TracksItem? = null,
 )
+
+sealed class SpotifyTrackState {
+    data object NOTHING : SpotifyTrackState()
+    data object LOADING : SpotifyTrackState()
+    data class SUCCESS(val track: TracksItem) : SpotifyTrackState()
+    data class ERROR(val message: String) : SpotifyTrackState()
+}

@@ -1,7 +1,6 @@
 package com.hrk.tunedetect.result
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,28 +9,24 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.text.font.FontWeight.Companion.W700
 import androidx.compose.ui.text.font.FontWeight.Companion.W900
 import androidx.compose.ui.text.style.TextAlign
@@ -42,9 +37,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.hrk.apps.hrkdev.core.designsystem.component.DynamicAsyncImage
 import com.hrk.apps.hrkdev.core.designsystem.icon.HRKIcons
 import com.hrk.apps.hrkdev.core.designsystem.utils.ComposeUtils.clickableSingle
+import com.hrk.apps.hrkdev.core.designsystem.utils.ComposeUtils.shimmerLoading
 import com.hrk.apps.hrkdev.core.designsystem.utils.shadow
 import com.hrk.apps.hrkdev.core.model.iacr_cloud.ACRCloudResponse
-import com.hrk.apps.hrkdev.core.utils.JSON.toJson
 import com.hrk.tunedetect.util.orEmpty
 import com.hrk.tunedetect.util.textWithStyle
 
@@ -56,17 +51,7 @@ fun ResultScreen(
         creationCallback = { factory -> factory.create(acrCloud = acrCloud) },
     )
 ) {
-    LaunchedEffect(acrCloud) {
-        Log.d("SDFSDFSDFSDFSDFSDF", "ResultScreen: ${acrCloud.toJson()}")
-    }
-
-    val uiState by viewmodel.uiState.collectAsState()
-
-    val trackImage = uiState.track?.album?.images?.firstOrNull()?.url.orEmpty()
-    val releaseDate = uiState.track?.album?.release_date.orEmpty()
-    val artists = uiState.track?.artists?.firstOrNull()?.name.orEmpty()
-    val songName = uiState.track?.name.orEmpty()
-    val duration = convertMillisecondsToMinutes(uiState.track?.duration_ms)
+    val spotifyState by viewmodel.spotifyState.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -91,102 +76,158 @@ fun ResultScreen(
             }
         }
     ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black)
-        ) {
-            DynamicAsyncImage(
-                modifier = Modifier
-                    .matchParentSize()
-                    .graphicsLayer {
-                        alpha = 0.15f
-                    },
-                imageUrl = trackImage,
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                DynamicAsyncImage(
-                    modifier = Modifier
-                        .size(250.dp)
-                        .shadow(
-                            offsetX = 2.dp,
-                            offsetY = 4.dp,
-                            color = Color.Black.copy(0.1f),
-                            blurRadius = 2.dp
-                        ),
-                    imageUrl = trackImage,
-                    contentDescription = null
-                )
-
+        when (spotifyState) {
+            is SpotifyTrackState.ERROR -> TODO()
+            SpotifyTrackState.LOADING -> {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black)
+                        .padding(paddingValues),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 32.dp),
-                        text = songName,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Center,
-                        style = TextStyle(
-                            fontSize = 32.sp,
-                            fontWeight = W900,
-                            color = Color.White
-                        )
+                            .size(250.dp)
+                            .shimmerLoading()
                     )
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        DynamicAsyncImage(
+                        Box(
                             modifier = Modifier
-                                .clip(CircleShape)
-                                .size(16.dp),
-                            imageUrl = trackImage,
-                            contentDescription = null
+                                .fillMaxWidth()
+                                .height(32.dp)
+                                .padding(horizontal = 32.dp)
+                                .shimmerLoading(),
                         )
 
-                        Spacer(modifier = Modifier.width(12.dp))
-
-                        Text(
-                            text = "$artists - ".textWithStyle(
-                                textSpan = releaseDate,
-                                spanStyle = SpanStyle(
-                                    fontWeight = W700,
-                                    color = Color.White
-                                )
-                            ).textWithStyle(
-                                textSpan = duration,
-                                spanStyle = SpanStyle(
-                                    fontWeight = W500,
-                                    color = Color.White
-                                )
-                            ),
-                            textAlign = TextAlign.Center,
-                            style = TextStyle(
-                                fontSize = 24.sp,
-                                fontWeight = W900,
-                                color = Color.White
-                            )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(16.dp)
+                                .padding(horizontal = 16.dp)
+                                .shimmerLoading(),
                         )
                     }
                 }
             }
+
+            is SpotifyTrackState.SUCCESS -> {
+                val trackDetail = (spotifyState as SpotifyTrackState.SUCCESS).track
+
+                val trackImage = trackDetail.album?.images?.firstOrNull()?.url.orEmpty()
+                val songName = trackDetail.name.orEmpty()
+                val duration = convertMillisecondsToMinutes(trackDetail.duration_ms)
+                val releaseDate = trackDetail.album?.release_date.orEmpty()
+                val artists = trackDetail.artists?.firstOrNull()?.name.orEmpty()
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black)
+                ) {
+                    DynamicAsyncImage(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .graphicsLayer {
+                                alpha = 0.15f
+                            },
+                        imageUrl = trackImage,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(
+                            modifier = Modifier.size(250.dp)
+                        ) {
+                            DynamicAsyncImage(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .shadow(
+                                        offsetX = 2.dp,
+                                        offsetY = 4.dp,
+                                        color = Color.Black.copy(0.1f),
+                                        blurRadius = 2.dp
+                                    ),
+                                imageUrl = trackImage,
+                                contentDescription = null
+                            )
+                            Text(
+                                modifier = Modifier
+                                    .padding(
+                                        bottom = 12.dp,
+                                        end = 12.dp
+                                    )
+                                    .align(Alignment.BottomEnd),
+                                text = duration,
+                                style = TextStyle(
+                                    fontSize = 24.sp,
+                                    fontWeight = W900,
+                                    color = Color.White
+                                )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 32.dp),
+                                text = songName,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center,
+                                style = TextStyle(
+                                    fontSize = 32.sp,
+                                    fontWeight = W900,
+                                    color = Color.White
+                                )
+                            )
+
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        horizontal = 16.dp
+                                    ),
+                                text = "$artists\n".textWithStyle(
+                                    textSpan = "$releaseDate ",
+                                    spanStyle = SpanStyle(
+                                        fontWeight = W700,
+                                        color = Color.White
+                                    )
+                                ),
+                                textAlign = TextAlign.Center,
+                                style = TextStyle(
+                                    fontSize = 24.sp,
+                                    fontWeight = W900,
+                                    color = Color.White
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
+            else -> Unit
         }
     }
 }

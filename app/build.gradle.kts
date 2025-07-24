@@ -31,8 +31,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "com.hrk.apps.hrkdev"
-        versionCode = 8
-        versionName = "0.1.2" // X.Y.Z; X = Major, Y = minor, Z = Patch level
+        versionCode = 1
+        versionName = "1.0.0"
 
         // Custom test runner to set up Hilt dependency graph
         testInstrumentationRunner = "com.hrk.apps.hrkdev.core.testing.HRKTestRunner"

@@ -9,6 +9,7 @@ import com.hrk.apps.hrkdev.ui.HRKAppState
 import com.hrk.tunedetect.home.navigation.HomeRoute
 import com.hrk.tunedetect.home.navigation.homeScreen
 import com.hrk.tunedetect.home.navigation.navigateToHomeScreen
+import com.hrk.tunedetect.result.navigation.ResultRoute
 import com.hrk.tunedetect.result.navigation.resultScreen
 import com.hrk.tunedetect.setting.navigation.settingScreen
 import com.hrk.tunedetect.splash.navigation.SplashRoute
@@ -24,7 +25,7 @@ fun HRKNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = SplashRoute,
+        startDestination = ResultRoute,
     ) {
         splashScreen(
             onNextScreen = navController::navigateToHomeScreen,
